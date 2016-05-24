@@ -20,11 +20,19 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    enum Move {
+        Black,
+        White
+    };
+
     Cell *m_cells[9][9];
     Cell *m_firstCell;
     Cell *m_secondCell;
 
     int move(Cell* cell);
+
+    Move getMove() { return m_move; }
+    void setMove( Move player );
 
     void setLabel(QString string);
 
@@ -35,6 +43,7 @@ private:
     QGraphicsScene *m_scene;
     Ui::MainWindow *ui;
     QColor *m_color;
+    Move m_move;
 };
 
 #endif // MAINWINDOW_HPP

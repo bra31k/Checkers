@@ -13,7 +13,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     m_firstCell(nullptr),
-    m_secondCell(nullptr)
+    m_secondCell(nullptr),
+    m_move(White)
 {
     ui->setupUi(this);
 
@@ -169,14 +170,37 @@ int MainWindow::move(Cell* cell) {
             m_secondCell = cell;
             if (m_firstCell->state() == Cell::BlackActive) {
                 m_secondCell->setState(Cell::StateBlack);
+                setMove(White);
+                setLabel("Белые");
             } else if (m_firstCell->state() == Cell::WhiteActive) {
                 m_secondCell->setState(Cell::StateWhite);
+                setMove(Black);
+                setLabel("Черные");
             }
             m_firstCell->setState(Cell::Statenothing); //Убрать старое положение
             m_firstCell = nullptr;
             m_secondCell = nullptr;
         }
+        else if (cell->state() == Cell::BlackActive) {
+            cell->setState(Cell::StateBlack);
+            m_firstCell = nullptr;
+            m_secondCell = nullptr;
+        }
+        else if (cell->state() == Cell::WhiteActive) {
+            cell->setState(Cell::StateWhite);
+            m_firstCell = nullptr;
+            m_secondCell = nullptr;
+        }
     }
+}
+
+void MainWindow::setMove(MainWindow::Move player)
+{
+        if (m_move == player)
+        {
+            return;
+        }
+        m_move = player;
 }
 
 void MainWindow::setLabel(QString string)
@@ -191,21 +215,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::onCellClicked(Cell *cell)
 {
-    static bool firstPlayerMove = true;
+    if((cell->state() == Cell::StateBlack && getMove() == White) || (cell->state() == Cell::StateWhite && getMove() == Black)) {
+        return; //Если ход черных и выбрана белая/ход белых и выбрана черная - ничего не происходит
+    }
 
-//    if((cell->state() == Cell::StateBlack && firstPlayerMove) || (cell->state() == Cell::StateWhite && !firstPlayerMove) || cell->state() == Cell::Statenothing) {
-//        return; //Если ход черных и выбрана белая/ход белых и выбрана черная/выбрана пустая клетка - ничего не происходит
-//    }
-
-//    if (firstPlayerMove) {
-//        firstPlayerMove = false;
-//        setLabel("Черные");
-//    } else {
-//        firstPlayerMove = true;
-//        setLabel("Белые");
-//    }
-
-    int status = move(cell);
+    move(cell);
     //    if (status) {
     //        QMessageBox msgBox;
     //        if (status == 1) {
