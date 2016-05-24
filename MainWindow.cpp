@@ -11,9 +11,9 @@ const int cellSize = 32;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)/*,
+    ui(new Ui::MainWindow),
     m_firstCell(nullptr),
-    m_secondCell(nullptr)*/
+    m_secondCell(nullptr)
 {
     ui->setupUi(this);
 
@@ -55,58 +55,62 @@ MainWindow::MainWindow(QWidget *parent) :
 }
 
 int MainWindow::move(Cell* cell) {
-    if (cell->state() == Cell::StateBlack) {
-        cell->setState(Cell::BlackActive);
-    } else if (cell->state() == Cell::StateWhite) {
-        cell->setState(Cell::WhiteActive);
-    }
-//    if (m_firstCell == nullptr) { //Если шашка не выбрана, выбрать эту ячейку
-//        m_firstCell = cell;
-//    } else if (m_secondCell == nullptr) { //Если выбрана, но не выбрано куда сходить, выбранная ячейка - ход
-//        m_secondCell = cell;
-//    } else if (m_firstCell != nullptr && m_secondCell != nullptr) { //Если выбрана шашка и ход
-//        if (m_firstCell != m_secondCell) { //И ход не равен ячейке, где стоит шашка
-//            cell->setPos(m_secondCell); //Сделать ход
 
-//        } else { //Если ход равен ячейке обнулить указатели
-//            m_firstCell = nullptr;
-//            m_secondCell = nullptr;
+//    int cx = cell->x()/50;
+//    int cy = cell->y()/50;
+//    int step = 1;
+
+//    bool dvBlock = false; // right up
+//    bool dnBlock = false; // left down
+//    bool dvvBlock = false; // right down
+//    bool dvnBlock = false; // left up
+
+//    if (cell->state() == Cell::StateBlack) {
+//        cell->setState(Cell::BlackActive);
+//        if (m_cells[cx-step][cy+step]->state() == Cell::Statenothing) {
+//            m_cells[cx-step][cy+step]->setState(Cell::possibleMove);
 //        }
-//        m_firstCell = cell;
+//        if (m_cells[cx+step][cy+step]->state() == Cell::Statenothing) {
+//            m_cells[cx+step][cy+step]->setState(Cell::possibleMove);
+//        }
+//    } else if (cell->state() == Cell::StateWhite) {
+//        cell->setState(Cell::WhiteActive);
+//        if (m_cells[cx-step][cy-step]->state() == Cell::Statenothing) {
+//            m_cells[cx-step][cy-+step]->setState(Cell::possibleMove);
+//        }
+//        if (m_cells[cx+step][cy-step]->state() == Cell::Statenothing) {
+//            m_cells[cx+step][cy-+step]->setState(Cell::possibleMove);
+//        }
 //    }
-    //    int cx = cell->x()/50;
-    //    int cy = cell->y()/50;
-    //    int drcounter = 0;
-    //    int dlcounter = 0;
-    //    int step = 1;
-    //    bool win = false;
 
-    //    bool dvBlock = false; // right up
-    //    bool dnBlock = false; // left down
-    //    bool dvvBlock = false; // right down
-    //    bool dvnBlock = false; // left up
+//    int drcounter = 0;
+//    int dlcounter = 0;
 
-    //    while (true) {
+//    bool win = false;
+
+
+//        while (true) {
     //        if (win) { break; }
 
-    //        if (cx == 7) {
-    //            dvBlock = true;
-    //            dvvBlock = true;
-    //        }
-    //        if (cx == 0) {
-    //            dnBlock = true;
-    //            dvnBlock = true;
-    //        }
-    //        if (cy == 7) {
-    //            dvBlock = true;
-    //            dvnBlock = true;
-    //        }
-    //        if (cy == 0) {
-    //            dnBlock = true;
-    //            dvvBlock = true;
-    //        }
+//            if (cx == 7) {
+//                dvBlock = true;
+//                dvvBlock = true;
+//            }
+//            if (cx == 0) {
+//                dnBlock = true;
+//                dvnBlock = true;
+//            }
+//            if (cy == 7) {
+//                dvBlock = true;
+//                dvnBlock = true;
+//            }
+//            if (cy == 0) {
+//                dnBlock = true;
+//                dvvBlock = true;
+//            }
 
-    //        if (dvBlock && dnBlock && dvvBlock && dvnBlock) { break; }
+//            if (dvBlock && dnBlock && dvvBlock && dvnBlock) { break; }
+
 
     //        if (!dvBlock){
     //            if(m_cells[cx+step][cy+step]->state() == cell->state()) {
@@ -132,7 +136,7 @@ int MainWindow::move(Cell* cell) {
     //            } else { dvnBlock = true; }
     //        }
 
-    //        step++;
+//            step++;
 
     //        if (drcounter == 1 || dlcounter == 1) {
     //            win = true;
@@ -148,6 +152,31 @@ int MainWindow::move(Cell* cell) {
     //        }
     //    }
     //    return 0;
+
+    if (m_firstCell == nullptr) { //Если шашка не выбрана, выбрать эту ячейку
+        if (cell->state() != Cell::Statenothing) {
+            m_firstCell = cell;
+            if (cell->state() == Cell::StateBlack) {
+                cell->setState(Cell::BlackActive);
+            }
+            else if (cell->state() == Cell::StateWhite) {
+                cell->setState(Cell::WhiteActive);
+            }
+        }
+
+    } else if (m_secondCell == nullptr) { //Если выбрана, но не выбрано куда сходить, выбранная ячейка - ход
+        if (cell->state() == Cell::Statenothing) {
+            m_secondCell = cell;
+            if (m_firstCell->state() == Cell::BlackActive) {
+                m_secondCell->setState(Cell::StateBlack);
+            } else if (m_firstCell->state() == Cell::WhiteActive) {
+                m_secondCell->setState(Cell::StateWhite);
+            }
+            m_firstCell->setState(Cell::Statenothing); //Убрать старое положение
+            m_firstCell = nullptr;
+            m_secondCell = nullptr;
+        }
+    }
 }
 
 void MainWindow::setLabel(QString string)
@@ -164,19 +193,19 @@ void MainWindow::onCellClicked(Cell *cell)
 {
     static bool firstPlayerMove = true;
 
-    if((cell->state() == Cell::StateBlack && firstPlayerMove) || (cell->state() == Cell::StateWhite && !firstPlayerMove) || cell->state() == Cell::Statenothing) {
-        return; //Если ход черных и выбрана белая/ход белых и выбрана черная/выбрана пустая клетка - ничего не происходит
-    }
+//    if((cell->state() == Cell::StateBlack && firstPlayerMove) || (cell->state() == Cell::StateWhite && !firstPlayerMove) || cell->state() == Cell::Statenothing) {
+//        return; //Если ход черных и выбрана белая/ход белых и выбрана черная/выбрана пустая клетка - ничего не происходит
+//    }
 
-    if (firstPlayerMove) {
-        firstPlayerMove = false;
-        setLabel("Черные");
-    } else {
-        firstPlayerMove = true;
-        setLabel("Белые");
-    }
+//    if (firstPlayerMove) {
+//        firstPlayerMove = false;
+//        setLabel("Черные");
+//    } else {
+//        firstPlayerMove = true;
+//        setLabel("Белые");
+//    }
 
-        int status = move(cell);
+    int status = move(cell);
     //    if (status) {
     //        QMessageBox msgBox;
     //        if (status == 1) {
