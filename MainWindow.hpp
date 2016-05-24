@@ -29,7 +29,7 @@ public:
     Cell *m_firstCell;
     Cell *m_secondCell;
 
-    int move(Cell* cell);
+    void move(Cell* cell);
 
     Move getMove() { return m_move; }
     void setMove( Move player );
