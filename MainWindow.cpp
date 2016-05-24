@@ -88,10 +88,20 @@ void MainWindow::move(Cell* cell) {
             if (m_cells[cx-step][cy+step]->state() == Cell::Statenothing) {
                 m_cells[cx-step][cy+step]->setState(Cell::possibleMove);
             }
+            else if (m_cells[cx-step][cy+step]->state() == Cell::StateWhite) {
+                if (m_cells[cx-step*2][cy+step*2]->state() == Cell::Statenothing) {
+                    m_cells[cx-step*2][cy+step*2]->setState(Cell::possibleMove);
+                }
+            }
         }
         if (!rDown) {
             if (m_cells[cx+step][cy+step]->state() == Cell::Statenothing) {
                 m_cells[cx+step][cy+step]->setState(Cell::possibleMove);
+            }
+            else if (m_cells[cx+step][cy+step]->state() == Cell::StateWhite) {
+                if (m_cells[cx+step*2][cy+step*2]->state() == Cell::Statenothing) {
+                    m_cells[cx+step*2][cy+step*2]->setState(Cell::possibleMove);
+                }
             }
         }
     }
@@ -100,10 +110,20 @@ void MainWindow::move(Cell* cell) {
             if (m_cells[cx-step][cy-step]->state() == Cell::Statenothing) {
                 m_cells[cx-step][cy-step]->setState(Cell::possibleMove);
             }
+            else if (m_cells[cx-step][cy-step]->state() == Cell::StateBlack) {
+                if (m_cells[cx-step*2][cy-step*2]->state() == Cell::Statenothing) {
+                    m_cells[cx-step*2][cy-step*2]->setState(Cell::possibleMove);
+                }
+            }
         }
         if (!rUp) {
             if (m_cells[cx+step][cy-step]->state() == Cell::Statenothing) {
                 m_cells[cx+step][cy-step]->setState(Cell::possibleMove);
+            }
+            else if (m_cells[cx+step][cy-step]->state() == Cell::StateBlack) {
+                if (m_cells[cx+step*2][cy-step*2]->state() == Cell::Statenothing) {
+                    m_cells[cx+step*2][cy-step*2]->setState(Cell::possibleMove);
+                }
             }
         }
     }

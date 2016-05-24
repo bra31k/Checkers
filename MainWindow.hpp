@@ -25,9 +25,7 @@ public:
         White
     };
 
-    Cell *m_cells[9][9];
-    Cell *m_firstCell;
-    Cell *m_secondCell;
+
 
     void move(Cell* cell);
 
@@ -44,6 +42,10 @@ private:
     Ui::MainWindow *ui;
     QColor *m_color;
     Move m_move;
+
+    Cell *m_cells[9][9];
+    Cell *m_firstCell;
+    Cell *m_secondCell;
 };
 
 #endif // MAINWINDOW_HPP
