@@ -21,7 +21,26 @@ void Cell::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     Q_UNUSED(option);
     painter->setRenderHint(QPainter::Antialiasing);
 
+
+
     painter->drawRect(0,0,50,50);
+
+    int row = x()/50;
+    int column = y()/50;
+
+    if (column % 2 == 0) {
+        if (row % 2 == 1) {
+            painter->fillRect(0,0,50,50,Qt::black);
+        } else {
+            painter->fillRect(0,0,50,50,Qt::white);
+        }
+    } else {
+        if (row % 2 == 0) {
+            painter->fillRect(0,0,50,50,Qt::black);
+        } else {
+            painter->fillRect(0,0,50,50,Qt::white);
+        }
+    }
     switch (m_state) {
     case StateBlack:
         painter->setBrush(Qt::red);
