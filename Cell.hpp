@@ -18,7 +18,9 @@ public:
 
         BlackActive,
         WhiteActive,
-        possibleMove
+        possibleMove,
+        possibleBJump,
+        possibleWJump
     };
 
     QRectF boundingRect() const;

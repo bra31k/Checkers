@@ -25,8 +25,6 @@ public:
         White
     };
 
-
-
     void move(Cell* cell);
 
     Move getMove() { return m_move; }

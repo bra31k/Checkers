@@ -12,9 +12,9 @@ const int cellSize = 32;
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
+    m_move(White),
     m_firstCell(nullptr),
-    m_secondCell(nullptr),
-    m_move(White)
+    m_secondCell(nullptr)
 {
     ui->setupUi(this);
 
@@ -85,12 +85,14 @@ void MainWindow::move(Cell* cell) {
 
     if (cell->state() == Cell::StateBlack) { //Расстановка возможных ходов для черных
         if (!lDown) {
-            if (m_cells[cx-step][cy+step]->state() == Cell::Statenothing) {
+            if (m_cells[cx-step][cy+step]->state() == Cell::Statenothing) { //Если есть свободная клетка
                 m_cells[cx-step][cy+step]->setState(Cell::possibleMove);
             }
-            else if (m_cells[cx-step][cy+step]->state() == Cell::StateWhite) {
-                if (m_cells[cx-step*2][cy+step*2]->state() == Cell::Statenothing) {
+            else if (m_cells[cx-step][cy+step]->state() == Cell::StateWhite && cx-step*2 > 0 && cy+step*2 < 8)  { //Если клетка за шашкой есть
+                if (m_cells[cx-step*2][cy+step*2]->state() == Cell::Statenothing) { //И она пустая
+                    m_cells[cx-step][cy+step]->setState(Cell::possibleWJump);
                     m_cells[cx-step*2][cy+step*2]->setState(Cell::possibleMove);
+                    if (!rDown) { m_cells[cx+step][cy+step]->setState(Cell::Statenothing); } //Эта пешка должна рубить, если выбрали ее
                 }
             }
         }
@@ -98,9 +100,11 @@ void MainWindow::move(Cell* cell) {
             if (m_cells[cx+step][cy+step]->state() == Cell::Statenothing) {
                 m_cells[cx+step][cy+step]->setState(Cell::possibleMove);
             }
-            else if (m_cells[cx+step][cy+step]->state() == Cell::StateWhite) {
+            else if (m_cells[cx+step][cy+step]->state() == Cell::StateWhite && cx+step*2 < 8 && cy+step*2 < 8) {
                 if (m_cells[cx+step*2][cy+step*2]->state() == Cell::Statenothing) {
+                    m_cells[cx+step][cy+step]->setState(Cell::possibleWJump);
                     m_cells[cx+step*2][cy+step*2]->setState(Cell::possibleMove);
+                    if (!lDown) { m_cells[cx-step][cy+step]->setState(Cell::Statenothing); }
                 }
             }
         }
@@ -110,9 +114,11 @@ void MainWindow::move(Cell* cell) {
             if (m_cells[cx-step][cy-step]->state() == Cell::Statenothing) {
                 m_cells[cx-step][cy-step]->setState(Cell::possibleMove);
             }
-            else if (m_cells[cx-step][cy-step]->state() == Cell::StateBlack) {
+            else if (m_cells[cx-step][cy-step]->state() == Cell::StateBlack && cx-step*2 > 0 && cy-step*2 > 0) {
                 if (m_cells[cx-step*2][cy-step*2]->state() == Cell::Statenothing) {
+                    m_cells[cx-step][cy-step]->setState(Cell::possibleBJump);
                     m_cells[cx-step*2][cy-step*2]->setState(Cell::possibleMove);
+                    if (!rUp) { m_cells[cx+step][cy-step]->setState(Cell::Statenothing); }
                 }
             }
         }
@@ -120,9 +126,11 @@ void MainWindow::move(Cell* cell) {
             if (m_cells[cx+step][cy-step]->state() == Cell::Statenothing) {
                 m_cells[cx+step][cy-step]->setState(Cell::possibleMove);
             }
-            else if (m_cells[cx+step][cy-step]->state() == Cell::StateBlack) {
+            else if (m_cells[cx+step][cy-step]->state() == Cell::StateBlack && cx+step*2 < 8 && cy-step*2 > 0) {
                 if (m_cells[cx+step*2][cy-step*2]->state() == Cell::Statenothing) {
+                    m_cells[cx+step][cy-step]->setState(Cell::possibleBJump);
                     m_cells[cx+step*2][cy-step*2]->setState(Cell::possibleMove);
+                    if (!lUp) { m_cells[cx-step][cy-step]->setState(Cell::Statenothing); }
                 }
             }
         }
@@ -155,6 +163,13 @@ void MainWindow::move(Cell* cell) {
                     setLabel("Черные");
                 }
             }
+            for (int j=0; j<8; j++) {
+                for(int i=0; i<8; i++) {
+                    if (m_cells[j][i]->state() == Cell::possibleBJump || m_cells[j][i]->state() == Cell::possibleWJump) {
+                        m_cells[j][i]->setState(Cell::Statenothing);
+                    }
+                }
+            }
             m_firstCell->setState(Cell::Statenothing); //Убрать старое положение
         }
         else if (cell->state() == Cell::BlackActive || cell->state() == Cell::WhiteActive) { //Если нажата активная
@@ -167,7 +182,7 @@ void MainWindow::move(Cell* cell) {
         }
         else if (cell->state() == Cell::StateBlack || cell->state() == Cell::StateWhite) { //Если нажата неактивная
             if (cell->state() == Cell::StateBlack) {
-                m_firstCell->setState(Cell::StateBlack); //Снять с нее статус активной
+                m_firstCell->setState(Cell::StateBlack); //Снять с активной статус
             }
             else if (cell->state() == Cell::StateWhite) {
                 m_firstCell->setState(Cell::StateWhite);
@@ -180,6 +195,12 @@ void MainWindow::move(Cell* cell) {
             for(int i=0; i<8; i++) {
                 if (m_cells[j][i]->state() == Cell::possibleMove) {
                     m_cells[j][i]->setState(Cell::Statenothing);
+                }
+                if (m_cells[j][i]->state() == Cell::possibleBJump) {
+                    m_cells[j][i]->setState(Cell::StateBlack);
+                }
+                if (m_cells[j][i]->state() == Cell::possibleWJump) {
+                    m_cells[j][i]->setState(Cell::StateWhite);
                 }
             }
         }
@@ -256,7 +277,8 @@ void MainWindow::onCellClicked(Cell *cell)
 //                }
 //            }
 //            m_scene->update();
-//            firstPlayerMove = false;
+//            setMove(White);
+//            setLabel("Белые");
 //            break;
 //        case QMessageBox::Close:
 //            exit(0);

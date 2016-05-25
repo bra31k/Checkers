@@ -39,6 +39,14 @@ void Cell::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
         painter->setBrush(Qt::cyan);
         painter->drawEllipse(2,2,46,46);
         break;
+    case possibleBJump:
+        painter->setBrush(Qt::red);
+        painter->drawEllipse(2,2,46,46);
+        break;
+    case possibleWJump:
+        painter->setBrush(Qt::red);
+        painter->drawEllipse(2,2,46,46);
+        break;
     case BlackActive:
         painter->setBrush(Qt::cyan);
         painter->drawEllipse(2,2,46,46);
