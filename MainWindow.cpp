@@ -233,58 +233,71 @@ void MainWindow::onCellClicked(Cell *cell)
     }
 
     move(cell);
-//    if (status) {
-//        QMessageBox msgBox;
-//        if (status == 1) {
-//            msgBox.setText("Победа черных");
-//        }
-//        if (status == 2) {
-//            msgBox.setText("Победа белых");
-//        }
-//        msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Close);
-//        msgBox.setButtonText(QMessageBox::Ok, "New Game");
-//        msgBox.setButtonText(QMessageBox::Close, "Quit");
-//        msgBox.setDefaultButton(QMessageBox::Ok);
-//        int ret = msgBox.exec();
-//        switch (ret) {
-//        case QMessageBox::Ok:
-//            for (int j=0; j<8; j++) {
-//                for(int i=0; i<8; i++) {
-//                    m_cells[j][i] = new Cell();
-//                    m_scene->addItem(m_cells[j][i]);
-//                    m_cells[j][i]->setState(Cell::Statenothing);
-//                    m_cells[j][i]->setPos(j*50,i*50);
-//                    connect(m_cells[j][i], SIGNAL(clicked(Cell*)), this, SLOT(onCellClicked(Cell*)));
-//                }
-//            }
-//            int checkersToPlace = 24;
-//            while (checkersToPlace > 0) {
-//                for (int j=0; j<8; j++) {
-//                    for(int i=0; i<8; i++) {
-//                        if (i < 3) {
-//                            if ( (j % 2 == 1 && i % 2 == 0) || (j % 2 == 0 && i == 1) ) {
-//                                m_cells[j][i]->setState(Cell::StateBlack);
-//                                checkersToPlace--;
-//                            }
-//                        }
-//                        if (i>4) {
-//                            if ( (j % 2 == 1 && i % 2 == 0) || (j % 2 == 0 && (i == 5 || i == 7)) ) {
-//                                m_cells[j][i]->setState(Cell::StateWhite);
-//                                checkersToPlace--;
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//            m_scene->update();
-//            setMove(White);
-//            setLabel("Белые");
-//            break;
-//        case QMessageBox::Close:
-//            exit(0);
-//            break;
-//        default:
-//            break;
-//        }
-//    }
+
+    int b = 0;
+    int w = 0;
+    for (int j=0; j<8; j++) {
+        for(int i=0; i<8; i++) {
+            if (m_cells[j][i]->state() == Cell::StateBlack) {
+                b++;
+            } else if (m_cells[j][i]->state() == Cell::StateWhite) {
+                w++;
+            }
+        }
+    }
+    if (b == 0 || w == 0) {
+        QMessageBox msgBox;
+        if (w == 0) {
+            msgBox.setText("Победа черных");
+        }
+        if (b == 0) {
+            msgBox.setText("Победа белых");
+        }
+        msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Close);
+        msgBox.setButtonText(QMessageBox::Ok, "New Game");
+        msgBox.setButtonText(QMessageBox::Close, "Quit");
+        msgBox.setDefaultButton(QMessageBox::Ok);
+        int ret = msgBox.exec();
+        switch (ret) {
+        case QMessageBox::Ok:
+            for (int j=0; j<8; j++) {
+                for(int i=0; i<8; i++) {
+                    m_cells[j][i] = new Cell();
+                    m_scene->addItem(m_cells[j][i]);
+                    m_cells[j][i]->setState(Cell::Statenothing);
+                    m_cells[j][i]->setPos(j*50,i*50);
+                    connect(m_cells[j][i], SIGNAL(clicked(Cell*)), this, SLOT(onCellClicked(Cell*)));
+                }
+            }
+            for (int checkersToPlace; checkersToPlace > 0;) {
+                for (int j=0; j<8; j++) {
+                    for(int i=0; i<8; i++) {
+                        if (i < 3) {
+                            if ( (j % 2 == 1 && i % 2 == 0) || (j % 2 == 0 && i == 1) ) {
+                                m_cells[j][i]->setState(Cell::StateBlack);
+                                checkersToPlace--;
+                            }
+                        }
+                        if (i>4) {
+                            if ( (j % 2 == 1 && i % 2 == 0) || (j % 2 == 0 && (i == 5 || i == 7)) ) {
+                                m_cells[j][i]->setState(Cell::StateWhite);
+                                checkersToPlace--;
+                            }
+                        }
+                    }
+                }
+            }
+            setMove(White);
+            setLabel("Белые");
+            m_scene->update();
+
+            break;
+
+        case QMessageBox::Close:
+            exit(0);
+            break;
+        default:
+            break;
+        }
+    }
 }
