@@ -88,34 +88,81 @@ void MainWindow::move(Cell* cell) {
             if (m_cells[cx-step][cy+step]->state() == Cell::Statenothing) { //Если есть свободная клетка
                 m_cells[cx-step][cy+step]->setState(Cell::possibleMove);
             }
-            else if (m_cells[cx-step][cy+step]->state() == Cell::StateWhite && cx-step*2 > 0 && cy+step*2 < 8)  { //Если клетка за шашкой есть
-                if (m_cells[cx-step*2][cy+step*2]->state() == Cell::Statenothing) { //И она пустая
-                    m_cells[cx-step][cy+step]->setState(Cell::possibleWJump);
-                    m_cells[cx-step*2][cy+step*2]->setState(Cell::possibleMove);
-                    if (!rDown) { m_cells[cx+step][cy+step]->setState(Cell::Statenothing); } //Эта пешка должна рубить, если выбрали ее
+            else {
+                if (m_cells[cx-step][cy+step]->state() == Cell::StateWhite && cx-step*2 > 0 && cy+step*2 < 8)  { //Если клетка за шашкой есть
+                    if (m_cells[cx-step*2][cy+step*2]->state() == Cell::Statenothing) { //И она пустая
+                        if (m_cells[cx-step*3][cy+step*3]->state() == Cell::StateWhite && cx-step*4 > 0 && cy+step*4 < 8){
+                            if (m_cells[cx-step*4][cy+step*4]->state() == Cell::Statenothing){
+                                m_cells[cx-step*3][cy+step*3]->setState(Cell::possibleWJump);
+                                m_cells[cx-step*4][cy+step*4]->setState(Cell::possibleMove);
+                            }
+                        }
+                        if (m_cells[cx-step][cy+step*3]->state() == Cell::StateWhite and cx < 8 and cy+step*4 < 8){
+                            if (m_cells[cx][cy+step*4]->state() == Cell::Statenothing){
+                                m_cells[cx-step][cy+step*3]->setState(Cell::possibleWJump);
+                                m_cells[cx][cy+step*4]->setState(Cell::possibleMove);
+
+                            }
+                        }
+                        m_cells[cx-step][cy+step]->setState(Cell::possibleWJump);
+                        m_cells[cx-step*2][cy+step*2]->setState(Cell::possibleMove);
+                        if (!rDown) { m_cells[cx+step][cy+step]->setState(Cell::Statenothing); } //Эта пешка должна рубить, если выбрали ее
+                    }
                 }
             }
         }
+
         if (!rDown) {
             if (m_cells[cx+step][cy+step]->state() == Cell::Statenothing) {
                 m_cells[cx+step][cy+step]->setState(Cell::possibleMove);
             }
-            else if (m_cells[cx+step][cy+step]->state() == Cell::StateWhite && cx+step*2 < 8 && cy+step*2 < 8) {
-                if (m_cells[cx+step*2][cy+step*2]->state() == Cell::Statenothing) {
-                    m_cells[cx+step][cy+step]->setState(Cell::possibleWJump);
-                    m_cells[cx+step*2][cy+step*2]->setState(Cell::possibleMove);
-                    if (!lDown) { m_cells[cx-step][cy+step]->setState(Cell::Statenothing); }
+            else { if (m_cells[cx+step][cy+step]->state() == Cell::StateWhite && cx+step*2 < 8 && cy+step*2 < 8) {
+                    if (m_cells[cx+step*2][cy+step*2]->state() == Cell::Statenothing) {
+                        if (m_cells[cx+step][cy+step*3]->state() == Cell::StateWhite && cx-step > 0 && cy+step*4 < 8){
+                            if (m_cells[cx][cy+step*4]->state() == Cell::Statenothing){
+                                m_cells[cx+step][cy+step*3]->setState(Cell::possibleWJump);
+                                m_cells[cx][cy+step*4]->setState(Cell::possibleMove);
+                            }
+
+                        }
+                        if (m_cells[cx+step*3][cy+step*3]->state() == Cell::StateWhite && cx+step*4 < 8 && cy+step*4 < 8){
+                            if (m_cells[cx+step*4][cy+step*4]->state() == Cell::Statenothing){
+                                m_cells[cx+step*3][cy+step*3]->setState(Cell::possibleWJump);
+                                m_cells[cx+step*4][cy+step*4]->setState(Cell::possibleMove);
+
+                            }
+                        }
+                        m_cells[cx+step][cy+step]->setState(Cell::possibleWJump);
+                        m_cells[cx+step*2][cy+step*2]->setState(Cell::possibleMove);
+                        if (m_cells[cx+step])
+                        if (!lDown) { m_cells[cx-step][cy+step]->setState(Cell::Statenothing); }
+                    }
                 }
             }
         }
     }
+
     if (cell->state() == Cell::StateWhite) { //Расстановка возможных ходов для белых
         if (!lUp) {
             if (m_cells[cx-step][cy-step]->state() == Cell::Statenothing) {
                 m_cells[cx-step][cy-step]->setState(Cell::possibleMove);
             }
-            else if (m_cells[cx-step][cy-step]->state() == Cell::StateBlack && cx-step*2 > 0 && cy-step*2 > 0) {
+            else if (m_cells[cx-step][cy-step]->state() == Cell::StateBlack && cx-step*2 < 8 && cy-step*2 > 0) {
                 if (m_cells[cx-step*2][cy-step*2]->state() == Cell::Statenothing) {
+                    if (m_cells[cx-step][cy-step*3]->state() == Cell::StateBlack and cx < 8 and cy+step*4 > 0){
+                        if (m_cells[cx][cy-step*4]->state() == Cell::Statenothing){
+                            m_cells[cx-step][cy-step*3]->setState(Cell::possibleWJump);
+                            m_cells[cx][cy-step*4]->setState(Cell::possibleMove);
+                        }
+                    }
+                    if (m_cells[cx-step*3][cy-step*3]->state() == Cell::StateBlack && cx-step*2 < 8 && cy-step*2 > 0){
+                        if (m_cells[cx-step*4][cy-step*4]->state() == Cell::Statenothing){
+                            m_cells[cx-step*3][cy-step*3]->setState(Cell::possibleWJump);
+                            m_cells[cx-step*4][cy-step*4]->setState(Cell::possibleMove);
+
+                        }
+                    }
+
                     m_cells[cx-step][cy-step]->setState(Cell::possibleBJump);
                     m_cells[cx-step*2][cy-step*2]->setState(Cell::possibleMove);
                     if (!rUp) { m_cells[cx+step][cy-step]->setState(Cell::Statenothing); }
@@ -128,6 +175,19 @@ void MainWindow::move(Cell* cell) {
             }
             else if (m_cells[cx+step][cy-step]->state() == Cell::StateBlack && cx+step*2 < 8 && cy-step*2 > 0) {
                 if (m_cells[cx+step*2][cy-step*2]->state() == Cell::Statenothing) {
+                    if (m_cells[cx+step][cy-step*3]->state() == Cell::StateBlack and cx < 8 and cy+step*4 > 0){
+                        if (m_cells[cx][cy-step*4]->state() == Cell::Statenothing){
+                            m_cells[cx+step][cy-step*3]->setState(Cell::possibleWJump);
+                            m_cells[cx][cy-step*4]->setState(Cell::possibleMove);
+                        }
+                    }
+                    if (m_cells[cx+step*3][cy-step*3]->state() == Cell::StateBlack && cx-step*2 < 8 && cy-step*2 > 0){
+                        if (m_cells[cx+step*4][cy-step*4]->state() == Cell::Statenothing){
+                            m_cells[cx+step*3][cy-step*3]->setState(Cell::possibleWJump);
+                            m_cells[cx+step*4][cy-step*4]->setState(Cell::possibleMove);
+
+                        }
+                    }
                     m_cells[cx+step][cy-step]->setState(Cell::possibleBJump);
                     m_cells[cx+step*2][cy-step*2]->setState(Cell::possibleMove);
                     if (!lUp) { m_cells[cx-step][cy-step]->setState(Cell::Statenothing); }
